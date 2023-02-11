@@ -1,3 +1,15 @@
-from django.shortcuts import render
+from rest_framework import generics
+from rest_framework.viewsets import ModelViewSet
 
-# Create your views here.
+from .models import Tag, Question
+from .serializers import TagSerializer, QuestionSerializer
+
+
+class TagListCreateView(generics.ListCreateAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+
+class QuestionView(ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
