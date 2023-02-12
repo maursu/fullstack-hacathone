@@ -5,7 +5,6 @@ from slugify import slugify
 
 User = get_user_model()
 
-
 class Tag(models.Model):
     title = models.CharField(max_length=20, unique=True)
     slug = models.SlugField(max_length=20, primary_key=True, blank=True)
@@ -14,7 +13,7 @@ class Tag(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save()
-    
+
     def __str__(self) -> str:
         return self.title
 

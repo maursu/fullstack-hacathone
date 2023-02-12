@@ -6,16 +6,12 @@ from review.serializers import AnswerSerializer
 
 
 class TagSerializer(serializers.ModelSerializer):
-    
-
     class Meta:
         model = Tag
         fields = ('title',)
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-
-
     class Meta:
         model = Question
         fields = '__all__'

@@ -11,3 +11,8 @@ make migrate:
 make static:
 	python manage.py collectstatic
 
+make test:
+	python manage.py test
+
+make shell:
+	python manage.py shell
