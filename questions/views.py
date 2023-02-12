@@ -10,6 +10,6 @@ class TagListCreateView(generics.ListCreateAPIView):
     serializer_class = TagSerializer
 
 
-class QuestionView(ModelViewSet):
+class QuestionViewSet(ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer

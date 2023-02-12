@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     #apps
     'account',
     'questions',
-    'review',
+    'reviews',
     'answers',
 ]
 

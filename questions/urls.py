@@ -1,13 +1,13 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from .views import TagListCreateView, QuestionView
+from . import views
 
 
 router = DefaultRouter()
-router.register('questions', QuestionView)
+router.register('questions', views.QuestionViewSet)
 
 urlpatterns = [
-    path('tags/', TagListCreateView.as_view()),
+    path('tags/', views.TagListCreateView.as_view()),
     path('', include(router.urls))
 ]

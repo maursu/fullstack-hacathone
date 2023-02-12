@@ -4,6 +4,6 @@ from .serializers import AnswerSerializer
 from .models import Answer
 
 
-class AnswerView(ModelViewSet):
+class AnswerViewSet(ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
