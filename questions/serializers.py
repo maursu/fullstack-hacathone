@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from .models import Tag, Question
-from review.models import Answer
-from review.serializers import AnswerSerializer
+from answers.models import Answer
+from answers.serializers import AnswerSerializer
 
 
 class TagSerializer(serializers.ModelSerializer):

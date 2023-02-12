@@ -1,29 +1,37 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from questions.models import Question
+from answers.models import Answer, Question
 
 
 User = get_user_model()
 
-class Answer(models.Model):
-    body = models.TextField()
-    image = models.ImageField(upload_to='images/answers/', blank=True)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='answers')
-    created_at = models.DateTimeField(auto_now_add=True)
-    last_update = models.DateTimeField(auto_now=True)
+class AnswerReview(models.Model):
+    answer = models.ForeignKey(
+        Answer,
+        related_name='answer_reviews',
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        User,
+        related_name='answer_reviews',
+        on_delete=models.CASCADE)
+    is_liked = models.BooleanField(default=False)
 
-    def __str__(self) -> str:
-        return self.body
+    def __str__(self):
+        return f'Answer id: {self.answer.pk}'
 
+class QuestionReview(models.Model):
+    question = models.ForeignKey(
+        Question,
+        related_name='question_reviews',
+        on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User,
+        related_name='question_reviews',
+        on_delete=models.CASCADE
+    )
+    is_liked = models.BooleanField(default=False)
 
-class Comment(models.Model):
-    body = models.TextField()
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
-    created_at = models.DateTimeField(auto_now_add=True)
-    last_update = models.DateTimeField(auto_now=True)
-
-    def __str__(self) -> str:
-        return self.body
+    def __str__(self):
+        return f'Question id: {self.question.pk}'

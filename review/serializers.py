@@ -1,15 +1,15 @@
 from rest_framework import serializers
 
-from .models import Answer
+from .models import AnswerReview, QuestionReview
 
 
-class AnswerSerializer(serializers.ModelSerializer):
+class AnswerReviewSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Answer
+        model = AnswerReview
         fields = '__all__'
 
-    # def create(self,validated_data):
-    #     request = self.context.get('request')
-    #     user = request.user
-    #     answer = Answer.objects.create(author=user, **validated_data)
-    #     return answer
+
+class QuestionReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionReview
+        fields = '__all__'

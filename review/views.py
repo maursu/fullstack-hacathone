@@ -1,9 +1,15 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import generics
+from rest_framework.response import Response
 
-from .serializers import AnswerSerializer
-from .models import Answer
+from .serializers import AnswerReviewSerializer, QuestionReviewSerializer
+from .models import AnswerReview, QuestionReview
 
 
-class AnswerView(ModelViewSet):
-    queryset = Answer.objects.all()
-    serializer_class = AnswerSerializer
+class AnswerReviewListView(generics.ListAPIView):
+    queryset = AnswerReview.objects.all()
+    serializer_class = AnswerReviewSerializer
+
+
+class QuestionReviewListView(generics.ListAPIView):
+    queryset = QuestionReview.objects.all()
+    serializer_class = QuestionReviewSerializer
