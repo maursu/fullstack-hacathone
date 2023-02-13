@@ -6,8 +6,8 @@ from . import views
 
 router = DefaultRouter()
 router.register('questions', views.QuestionViewSet)
+router.register('tags', views.TagViewSet)
 
 urlpatterns = [
-    path('tags/', views.TagListCreateView.as_view()),
     path('', include(router.urls))
 ]

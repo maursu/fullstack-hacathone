@@ -20,4 +20,5 @@ urlpatterns = [
     path('api/v1/', include('questions.urls')),
     path('api/v1/', include('answers.urls')),
     path('api/v1/', include('reviews.urls')),
+    path('api/v1/', include('favorites.urls')),
 ]
