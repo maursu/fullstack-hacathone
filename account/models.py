@@ -6,9 +6,9 @@ from slugify import slugify
 
 class UserManager(BaseUserManager):
     def _create(self, email, password, **extra_fields):
-        # if not email:
-        #     raise ValueError('email is required')
-        email = self.normalize_email
+        if not email:
+            raise ValueError('email is required')
+        email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.create_activation_code()
@@ -23,14 +23,16 @@ class UserManager(BaseUserManager):
         user.is_active = True
         user.is_staff = True
         user.is_superuser = True
-        user.is_recognized_member = True
+        user.save()
+        # user.is_recognized_member = True
 
 
 class User(AbstractUser):
     objects = UserManager()
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=50)
+    first_name = None
+    name = models.CharField(max_length=50, blank=True) 
     last_name = models.CharField(max_length=50, blank=True)
     activation_code = models.CharField(max_length=10, null=True)
     user_photo = models.ImageField(upload_to=f'media/account/', blank=True)
@@ -39,7 +41,7 @@ class User(AbstractUser):
     telegram_account = models.URLField(blank=True)
     is_recognized_member = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
-    slug = models.SlugField(primary_key=True)
+    slug = models.SlugField(blank=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
