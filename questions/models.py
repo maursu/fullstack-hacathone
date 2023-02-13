@@ -8,6 +8,7 @@ User = get_user_model()
 class Tag(models.Model):
     title = models.CharField(max_length=20, unique=True)
     slug = models.SlugField(max_length=20, primary_key=True, blank=True)
+    description = models.CharField(max_length=40)
 
     def save(self, *args, **kwargs):
         if not self.slug:
