@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'reviews',
     'answers',
     'favorites',
+    'parser',
 ]
 
 MIDDLEWARE = [
