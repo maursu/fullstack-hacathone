@@ -58,6 +58,6 @@ class User(AbstractUser):
     def create_activation_code(self):
         code = get_random_string(10)
         self.activation_code = code
-        self.save
+        self.save()
     
 
