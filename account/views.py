@@ -14,7 +14,7 @@ User = get_user_model()
 
 class RegistrationView(generics.CreateAPIView):
     serializer_class = s.RegistrationSerializer
-
+    @swagger_auto_schema(request_body=RegistrationSerializer())
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)
         return Response('Регистрация осуществлена')
@@ -49,4 +49,3 @@ class ChangePasswordView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.set_new_password()
             return Response('Пароль успешно обновлен', status=200)
-

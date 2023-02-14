@@ -15,7 +15,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'password',
-            'password_confirm', 
+            'password_confirm',
             'email',
             'username',   
         ]
@@ -33,6 +33,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             user.email, user.activation_code
         )
         return user
+
 
 class ChangePasswordSerializer(
     serializers.ModelSerializer):
@@ -76,4 +77,3 @@ class ChangePasswordSerializer(
         user = self.context['request'].user
         user.set_password(new_pass)
         user.save()
-

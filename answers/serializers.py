@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from .models import Answer, Comment
-
+from reviews.models import AnswerReview
+from reviews.serializers import AnswerReviewSerializer
 
 class AnswerSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source = 'author.username')
@@ -18,7 +19,10 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['comments'] = CommentSerializer(Comment.objects.filter(answer=instance.pk), many=True).data
+        representation['comments'] = CommentSerializer(
+            Comment.objects.filter(answer=instance.pk), many=True).data
+        representation['likes'] = AnswerReviewSerializer(
+            AnswerReview.objects.filter(answer=instance.pk), many=True).data
         return representation
 
 
