@@ -14,10 +14,12 @@ User = get_user_model()
 
 class RegistrationView(generics.CreateAPIView):
     serializer_class = s.RegistrationSerializer
-    @swagger_auto_schema(request_body=RegistrationSerializer())
+
+    @swagger_auto_schema(request_body=s.RegistrationSerializer())
     def post(self, request, *args, **kwargs):
         super().post(request, *args, **kwargs)
         return Response('Регистрация осуществлена')
+
 
 class ActivationView(APIView):
     def get(self, request, email, activation_code):
@@ -28,6 +30,7 @@ class ActivationView(APIView):
         user.is_active = True
         user.save()
         return Response('Активирован', status=200)
+
 
 class LogoutView(APIView):
     permission_classes = [p.IsActivePermission]
