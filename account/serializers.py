@@ -17,7 +17,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'password',
             'password_confirm',
             'email',
-            'username',   
+            'username',
+            'name',
+            'last_name',
+            'github_account',
+            'telegram_account',
+            'web_site',  
         ]
 
     def validate(self, attrs):
