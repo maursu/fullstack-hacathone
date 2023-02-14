@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 def send_activation_code(email, activation_code):
     context = {
         'text_detail': 'спасибо за регистрацию',
-        'email':email,
+        'email': email,
         'domain': 'http://localhost:8000/',
         'activation_code' : activation_code
     }

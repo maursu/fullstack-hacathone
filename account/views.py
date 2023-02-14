@@ -14,7 +14,7 @@ class RegistrationView(generics.CreateAPIView):
     @swagger_auto_schema(request_body=RegistrationSerializer())
     def post(self, request):
         data = request.data #получить JSON
-        print(data)
+        print(data) #TODO удалить перед деплоем
         serializer = RegistrationSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -68,7 +68,7 @@ class ActivationView(APIView):
 #             serializer.send_verification_email()
 #             return Response(
 #                     'Вам выслали сообщение для восстановления пароля'
-                
+
 #                 )
 
 # class ForgotPasswordCompleteView(APIView):

@@ -32,7 +32,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(unique=True)
     first_name = None
-    name = models.CharField(max_length=50, blank=True) 
+    name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     activation_code = models.CharField(max_length=10, null=True)
     user_photo = models.ImageField(upload_to=f'media/account/', blank=True)
@@ -53,11 +53,8 @@ class User(AbstractUser):
         if not self.slug:
             self.slug = slugify(self.username)
         super().save(*args, **kwargs)
-    
 
     def create_activation_code(self):
         code = get_random_string(10)
         self.activation_code = code
-        self.save
-    
-
+        self.save()

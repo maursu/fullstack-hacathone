@@ -12,10 +12,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'password',
-            'password_confirm', 
+            'password_confirm',
             'email',
             'username',
-            
         ]
 
     def validate(self, attrs):
@@ -31,5 +30,3 @@ class RegistrationSerializer(serializers.ModelSerializer):
             user.email, user.activation_code
         )
         return user
-
-    
