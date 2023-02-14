@@ -6,7 +6,7 @@ from rest_framework import serializers
 from .tasks import send_activation_code_celery
 
 User = get_user_model()
-email = ''
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(min_length=4, required=True, write_only=True)
@@ -35,8 +35,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-class ChangePasswordSerializer(
-    serializers.ModelSerializer):
+class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(
         min_length=4, required=True
     )
@@ -49,7 +48,11 @@ class ChangePasswordSerializer(
 
     class Meta:
         model = User
-        fields = ['old_password', 'new_password', 'new_password_confirm']
+        fields = [
+            'old_password',
+            'new_password',
+            'new_password_confirm'
+        ]
     
     def validate_old_password(self, old_pass):
         request = self.context.get('request')
