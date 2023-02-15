@@ -10,3 +10,4 @@ def filter_text(body: str) -> str:
                     lower_text = lower_text.replace(word,'*'*len(word),1)                        
                     body = body.replace(body[start:start + len(word):], '*'*len(word))
     return body
+
