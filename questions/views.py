@@ -4,7 +4,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, AllowAny
-from django_filters.rest_framework import DjangoFilterBackend
+import django_filters
+from rest_framework import filters
 from fuzzywuzzy import fuzz
 
 from .models import Tag, Question
@@ -37,8 +38,11 @@ class TagViewSet(ModelViewSet):
 class QuestionViewSet(PermissionsMixin, ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = serializers.QuestionSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['tag']
+    search_fields = ['tag', 'title']
+    ordering_fields = ['title', 'views_count', 'updated_at', 'created_at']
+    ordering = ['created_at']
 
     def list(self, request, *args, **kwargs):
         self.serializer_class = serializers.QuestionListSerializer
@@ -77,8 +81,11 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
             result = SequenceMatcher(None, title, i.title).ratio()
             if result > 0.7:
                 matches.append(i)
-        serializer = serializers.QuestionSerializer(matches, many=True)
-        return Response(serializer.data, status=200)
+        if matches != []:
+            serializer = serializers.QuestionSerializer(matches, many=True)
+            return Response(serializer.data, status=200)
+        else:
+            return Response("Sorry. Matches didn't find")
     
     @action(['POST'], detail=True)
     def find_on_stackoverflow(self, request, pk):
@@ -91,5 +98,8 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
             result = fuzz.WRatio(title.lower(), i[0].lower())
             if result > 90:
                 matches.append({'title':i[0], 'link':[i[1]]})
-        serializer = StackOverflowSerialiser(matches, many=True)
-        return Response(serializer.data, status=200)
+        if matches != []:
+            serializer = StackOverflowSerialiser(matches, many=True)
+            return Response(serializer.data, status=200)
+        else:
+            return Response("Sorry. We didn't find similar questions on Stackoverflow.")

@@ -24,7 +24,7 @@ class Question(models.Model):
     slug = models.SlugField(max_length=50, primary_key=True, blank=True)
     body = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='questions')
-    image = models.ImageField(upload_to='images/questions/', blank=True)
+    image = models.ImageField(upload_to='questions/', blank=True)
     tag = models.ManyToManyField(Tag)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
