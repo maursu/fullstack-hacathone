@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from .models import Answer, Comment
-from reviews.models import AnswerReview
-from reviews.serializers import AnswerReviewSerializer
+from reviews.models import AnswerReview, CommentReview
+from reviews.serializers import AnswerReviewSerializer, CommentReviewSerializer
 
 class AnswerSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source = 'author.username')
@@ -21,10 +21,12 @@ class AnswerSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['comments'] = CommentSerializer(
             Comment.objects.filter(answer=instance.pk), many=True).data
-        representation['likes'] = AnswerReviewSerializer(
-            AnswerReview.objects.filter(answer=instance.pk), many=True).data
+        representation['likes'] = sum(1 for i in AnswerReviewSerializer(
+            AnswerReview.objects.filter(answer=instance.pk, is_liked = True), many=True).data)
+        representation['dislikes'] = sum(1 for i in AnswerReviewSerializer(
+            AnswerReview.objects.filter(answer=instance.pk, is_liked = False), many=True).data)
         return representation
-
+    
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source = 'author.username')
@@ -38,3 +40,11 @@ class CommentSerializer(serializers.ModelSerializer):
         user = request.user
         comment = Comment.objects.create(author=user, **validated_data)
         return comment
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['likes'] = sum(1 for i in CommentReviewSerializer(
+            CommentReview.objects.filter(comment=instance.pk, is_liked = True), many=True).data)
+        representation['dislikes'] = sum(1 for i in CommentReviewSerializer(
+            CommentReview.objects.filter(comment=instance.pk, is_liked = False), many=True).data)
+        return representation
