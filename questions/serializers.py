@@ -6,6 +6,7 @@ from answers.serializers import AnswerSerializer
 from favorites.models import Favorites
 from favorites.serializers import FavoritesSerializer
 
+from .utils import filter_text
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
