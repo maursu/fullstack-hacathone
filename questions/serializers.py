@@ -26,15 +26,15 @@ class QuestionListSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
-
+    
     class Meta:
         model = Question
         fields = '__all__'
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['answers'] = AnswerSerializer(Answer.objects.filter(question=instance.pk), many=True).data
         representation['favorite'] = (i['is_favorite'] for i in FavoritesSerializer(Favorites.objects.filter(is_favorite=True, question=instance.pk), many = True).data)
+        representation['answers'] = AnswerSerializer(Answer.objects.filter(question=instance.pk), many=True, context=self.context).data
         return representation
     
     def create(self,validated_data):

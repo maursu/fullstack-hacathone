@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Answer(models.Model):
     body = models.TextField()
-    image = models.ImageField(upload_to='images/answers/', blank=True)
+    image = models.ImageField(upload_to='answers/', blank=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='answers')
     created_at = models.DateTimeField(auto_now_add=True)
