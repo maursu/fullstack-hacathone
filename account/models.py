@@ -35,7 +35,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     activation_code = models.CharField(max_length=10, null=True)
-    user_photo = models.ImageField(upload_to=f'media/account/', blank=True)
+    user_photo = models.ImageField(upload_to='account/', blank=True)
     github_account = models.URLField(blank=True)
     web_site = models.URLField(blank=True)
     telegram_account = models.URLField(blank=True)

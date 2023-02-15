@@ -19,11 +19,27 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'email',
             'username',
             'name',
+            'user_photo',
             'last_name',
             'github_account',
             'telegram_account',
             'web_site',  
         ]
+
+    def validate_github_account(self, github_link):
+        if not github_link.startswith('www.github.com/') and not github_link.startswith('https://github.com/'):
+            raise serializers.ValidationError(
+                'некоррекнтная ссылка на гитхаб, введите в формате www.github.com/username или https://github.com/  '
+            )
+        return github_link
+    
+    def validate_telegram_account(self, telegramm_link):
+        if not telegramm_link.startswith('https://t.me/'):
+            raise serializers.ValidationError(
+                'некорректная ссылка на телеграм, введите в формате https://t.me/username'
+            )
+        return telegramm_link
+
 
     def validate(self, attrs):
         password = attrs.get('password')
@@ -85,3 +101,77 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         user.set_password(new_pass)
         user.save()
+
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, email):
+        if not User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                'Такого пользователя не зарегистрировано'
+            )
+        return email
+    
+    def send_verification_email(self):
+        email = self.validated_data.get('email')
+        user = User.objects.get(email=email)
+        user.create_activation_code()
+        send_mail(
+            'Восстановление пароля',
+            f'Ваш код восстановления: {user.activation_code}',
+            'example@gmail.com',
+            [user.email]
+        )
+
+
+class ForgotPasswordCompleteSerializer(serializers.Serializer):
+    code = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(min_length=4, required=True)
+    password_confirm = serializers.CharField(min_length=4, required=True)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        code = attrs.get('code')
+        password1 = attrs.get('password')
+        password2 = attrs.get('password_confirm')
+    
+        if not User.objects.filter(email=email, activation_code=code).exists():
+            raise serializers.ValidationError(
+                'Пользователь не найден или введен неправильный код'
+            )
+    
+        if password1!=password2:
+            raise serializers.ValidationError(
+                'Пароли не совпадают'
+            )
+        return attrs
+
+    def set_new_password(self):
+        email = self.validated_data.get('email')
+        password = self.validated_data.get('password')
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.activation_code = ''
+        user.save()
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            'username',
+            'name',
+            'last_name',
+            'user_photo',
+            'github_account',
+            'telegram_account',
+            'web_site',
+        ]
+
+
+
+
+    

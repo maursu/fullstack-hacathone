@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework_simplejwt.views import TokenRefreshView
 from drf_yasg.utils import swagger_auto_schema
+from slugify import slugify
 
 from . import serializers as s
 from . import permissions as p
@@ -52,3 +53,55 @@ class ChangePasswordView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.set_new_password()
             return Response('Пароль успешно обновлен', status=200)
+
+
+class ForgotPasswordView(APIView):
+    @swagger_auto_schema(request_body=s.ForgotPasswordSerializer)
+    def post(self, request):
+        serializer = s.ForgotPasswordSerializer(
+            data = request.data
+        )
+        if serializer.is_valid(raise_exception=True):
+            serializer.send_verification_email()
+            return Response(
+                    'Вам выслали сообщение для восстановления пароля'
+                
+                )
+
+class ForgotPasswordCompleteView(APIView):
+    @swagger_auto_schema(request_body=s.ForgotPasswordCompleteSerializer)
+    def post(self,request):
+        serializer = s.ForgotPasswordCompleteSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.set_new_password()
+            return Response(
+                'Ваш пароль успешно восстановлен'
+                )
+
+
+class ProfileView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = s.ProfileSerializer
+    permission_classes = [p.IsActivePermission]
+
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        if request.user.username != serializer.validated_data['username']:
+            instance.slug = slugify(serializer.validated_data['username'])
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
