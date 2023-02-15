@@ -32,6 +32,10 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = '__all__'
 
+    def validate_body(self, body):
+        body = filter_text(body)
+        return body
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['favorite'] = (i['is_favorite'] for i in FavoritesSerializer(Favorites.objects.filter(is_favorite=True, question=instance.pk), many = True).data)
