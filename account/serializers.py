@@ -14,6 +14,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'id',
             'password',
             'password_confirm',
             'email',
@@ -169,6 +170,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'github_account',
             'telegram_account',
             'web_site',
+            'id',
         ]
 
 
