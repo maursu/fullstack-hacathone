@@ -30,7 +30,7 @@ class PermissionsMixin():
 
 
 class TagViewSet(ModelViewSet):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminAuthPermission]
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
 

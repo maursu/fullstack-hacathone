@@ -16,6 +16,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = [
             'password',
             'password_confirm',
+	    'id',
             'email',
             'username',
             'name',
@@ -164,6 +165,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'email',
             'username',
             'name',
+            'id',
             'last_name',
             'user_photo',
             'github_account',
