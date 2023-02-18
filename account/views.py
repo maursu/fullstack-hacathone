@@ -108,6 +108,10 @@ class ProfileView(generics.RetrieveUpdateAPIView):
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
+    
+class ListOfUsers(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = s.ProfileSerializer
 
 
 from rest_framework import status
@@ -126,7 +130,8 @@ class LoginView(TokenObtainPairView):
                 'github_account':user.github_account,
                 'telegram_account':user.telegram_account,
                 'web_site':user.web_site,
-                'email':user.email}
+                'email':user.email,
+                'date_joined': user.date_joined}
         new_data = list(user_data.items())
         
         try:

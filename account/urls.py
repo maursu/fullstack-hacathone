@@ -12,5 +12,6 @@ urlpatterns = [
     path('change_password/', views.ChangePasswordView.as_view(), name='change_password'),
     path('forgot_password/', views.ForgotPasswordView.as_view()),
     path('forgot_password_complete/',views.ForgotPasswordCompleteView.as_view()),
-    path('profile/<int:pk>/', views.ProfileView.as_view())
+    path('profile/<int:pk>/', views.ProfileView.as_view()),
+    path('user_list', views.ListOfUsers.as_view())
 ]
