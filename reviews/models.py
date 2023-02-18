@@ -50,4 +50,4 @@ class CommentReview(models.Model):
     is_liked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Answer id: {self.answer.pk}'
+        return f'Answer id: {self.comment.pk}'

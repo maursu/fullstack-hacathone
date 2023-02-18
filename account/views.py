@@ -106,6 +106,11 @@ class ProfileView(generics.RetrieveUpdateAPIView):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
+class ListOfUsers(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = s.ProfileSerializer
+
+
 from rest_framework import status
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.views import TokenObtainPairView

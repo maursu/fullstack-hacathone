@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 
 from .tasks import send_activation_code_celery
+from answers import models
 
 User = get_user_model()
 
@@ -24,7 +25,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'last_name',
             'github_account',
             'telegram_account',
-            'web_site',  
+            'web_site',
+	    'date_joined',  
         ]
 
     def validate_github_account(self, github_link):
@@ -171,9 +173,24 @@ class ProfileSerializer(serializers.ModelSerializer):
             'github_account',
             'telegram_account',
             'web_site',
+	    'date_joined',
         ]
 
-
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        answers = models.Answer.objects.filter(author=instance.id)
+        comments = models.Comment.objects.filter(author=instance.id)
+        total_likes = 10
+        total_dislikes = 10
+        for answer in answers:
+            total_likes += answer.answer_reviews.filter(is_liked=True).count()*10
+            total_dislikes += answer.answer_reviews.filter(is_liked=False).count()
+        for comment in comments:
+            total_likes += comment.comment_reviews.filter(is_liked=True).count()*10
+            total_dislikes += comment.comment_reviews.filter(is_liked=False).count()   
+        total_rating = total_likes - total_dislikes
+        representation['average_rating'] = total_rating
+        return representation
 
 
     

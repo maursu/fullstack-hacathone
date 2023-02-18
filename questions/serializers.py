@@ -26,11 +26,17 @@ class QuestionListSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+    author = serializers.ReadOnlyField(source='author.id')
     
     class Meta:
         model = Question
         fields = '__all__'
+
+    def validate_title(self, title):
+
+        if self.Meta.model.objects.filter(title=title).exists():
+            raise serializers.ValidationError('Такой заголовок уже существует')
+        return title
 
     def validate_body(self, body):
         body = filter_text(body)

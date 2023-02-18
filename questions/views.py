@@ -29,8 +29,16 @@ class PermissionsMixin():
         return [permission() for permission in permissions]
 
 
-class TagViewSet(ModelViewSet):
-    permission_classes = [IsAdminAuthPermission]
+class TagPermissionsMixin():
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permissions = [AllowAny]
+        else:
+            permissions = [IsAdminUser]
+        return [permission() for permission in permissions]
+
+
+class TagViewSet(TagPermissionsMixin,ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
 
@@ -43,6 +51,22 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
     search_fields = ['tag', 'title']
     ordering_fields = ['title', 'views_count', 'updated_at', 'created_at']
     ordering = ['created_at']
+
+    def create(self, request, *args, **kwargs):
+        try:
+            tag_slugs = [i.strip() for i in request.data.get('tag').split(',')]
+        except:
+            return Response('Tag requires')
+        tags = list(Tag.objects.filter(slug__in=tag_slugs))
+        if len(tags) != len(tag_slugs):
+            raise serializer.ValidationError(f"Invalid tags")
+        data = request.data.copy()
+        data.setlist('tag', tags)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
     def list(self, request, *args, **kwargs):
         self.serializer_class = serializers.QuestionListSerializer
