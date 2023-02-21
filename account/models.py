@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.crypto import get_random_string
 from slugify import slugify
 
+
 class UserManager(BaseUserManager):
     def _create(self, email, password, **extra_fields):
         if not email:
@@ -24,7 +25,6 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.is_superuser = True
         user.save()
-        # user.is_recognized_member = True
 
 
 class User(AbstractUser):
@@ -42,6 +42,9 @@ class User(AbstractUser):
     is_recognized_member = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     slug = models.SlugField(blank=True)
+    is_mentor = models.BooleanField(default=False)
+    is_fireman = models.BooleanField(default=False)
+    about_me = models.TextField(default= 'shy user')
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

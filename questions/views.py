@@ -25,12 +25,20 @@ class PermissionsMixin():
         elif self.action in ['update','partial_update', 'destroy']:
             permissions = [IsAdminUser, IsOwnerOrReadOnly] 
         else:
-            permissions = [IsAdminAuthPermission]
+            permissions = [AllowAny]
         return [permission() for permission in permissions]
 
 
-class TagViewSet(ModelViewSet):
-    permission_classes = [IsAdminUser]
+class TagPermissionsMixin():
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permissions = [AllowAny]
+        else:
+            permissions = [IsAdminUser]
+        return [permission() for permission in permissions]
+
+
+class TagViewSet(TagPermissionsMixin,ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
 
@@ -40,9 +48,24 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
     serializer_class = serializers.QuestionSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['tag']
-    search_fields = ['tag', 'title']
+    search_fields = ['tag__title', 'title']
     ordering_fields = ['title', 'views_count', 'updated_at', 'created_at']
     ordering = ['created_at']
+
+    def create(self, request, *args, **kwargs):
+        try:
+            tag_slugs = [i.strip() for i in request.data.get('tag').split(',')]
+        except:
+            return Response('Tag requires')
+        tags = list(Tag.objects.filter(slug__in=tag_slugs))
+        if len(tags) != len(tag_slugs):
+            raise serializer.ValidationError(f"Invalid tags")
+        data = request.data.copy()
+        data.setlist('tag', tags)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
         self.serializer_class = serializers.QuestionListSerializer
@@ -74,12 +97,12 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
     @action(['POST'], detail=True)
     def similar_questions(self, request, pk):
         question = self.get_object()
-        title = question.title
+        body = question.body
         queryset = Question.objects.all()
         matches = []
         for i in queryset:
-            result = SequenceMatcher(None, title, i.title).ratio()
-            if result > 0.7:
+            result = SequenceMatcher(None, body, i.body).ratio()
+            if result > 0.5 and i.slug!=question.slug:
                 matches.append(i)
         if matches != []:
             serializer = serializers.QuestionSerializer(matches, many=True)
