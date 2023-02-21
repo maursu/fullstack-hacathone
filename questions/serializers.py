@@ -11,7 +11,7 @@ from .utils import filter_text
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('title', 'description')
+        fields = '__all__'
 
 
 class QuestionListSerializer(serializers.ModelSerializer):

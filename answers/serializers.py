@@ -5,6 +5,7 @@ from reviews.models import AnswerReview, CommentReview
 from reviews.serializers import AnswerReviewSerializer, CommentReviewSerializer
 from questions.utils import filter_text
 
+
 class AnswerSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source = 'author.id')
 

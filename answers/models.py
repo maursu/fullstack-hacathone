@@ -6,6 +6,7 @@ from questions.models import Question
 
 User = get_user_model()
 
+
 class Answer(models.Model):
     body = models.TextField()
     image = models.ImageField(upload_to='answers/', blank=True)
@@ -27,3 +28,4 @@ class Comment(models.Model):
 
     def __str__(self) -> str:
         return self.body
+    

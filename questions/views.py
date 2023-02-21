@@ -25,7 +25,7 @@ class PermissionsMixin():
         elif self.action in ['update','partial_update', 'destroy']:
             permissions = [IsAdminUser, IsOwnerOrReadOnly] 
         else:
-            permissions = [IsAdminAuthPermission]
+            permissions = [AllowAny]
         return [permission() for permission in permissions]
 
 
@@ -48,7 +48,7 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
     serializer_class = serializers.QuestionSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['tag']
-    search_fields = ['tag', 'title']
+    search_fields = ['tag__title', 'title']
     ordering_fields = ['title', 'views_count', 'updated_at', 'created_at']
     ordering = ['created_at']
 
@@ -97,12 +97,12 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
     @action(['POST'], detail=True)
     def similar_questions(self, request, pk):
         question = self.get_object()
-        title = question.title
+        body = question.body
         queryset = Question.objects.all()
         matches = []
         for i in queryset:
-            result = SequenceMatcher(None, title, i.title).ratio()
-            if result > 0.7:
+            result = SequenceMatcher(None, body, i.body).ratio()
+            if result > 0.5 and i.slug!=question.slug:
                 matches.append(i)
         if matches != []:
             serializer = serializers.QuestionSerializer(matches, many=True)

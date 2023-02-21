@@ -2,13 +2,26 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from rest_framework import serializers
 
-
 from .tasks import send_activation_code_celery
-from reviews.serializers import AnswerReviewSerializer, CommentReviewSerializer
-from reviews.models import AnswerReview, CommentReview
+from answers import models
 from answers import models
 
 User = get_user_model()
+
+MONTHS = {
+    'January': 'января',
+    'February': 'февраля',
+    'March': 'марта',
+    'April': 'апреля',
+    'May': 'мая',
+    'June': 'июня',
+    'July': 'июля',
+    'August': 'августа',
+    'September': 'сентября',
+    'October': 'октября',
+    'November': 'ноября',
+    'December': 'декабря',
+}
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -20,6 +33,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'id',
             'password',
             'password_confirm',
+	        'id',
             'email',
             'username',
             'name',
@@ -29,6 +43,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'telegram_account',
             'web_site',
             'date_joined',
+            'about_me',
         ]
 
     def validate_github_account(self, github_link):
@@ -44,7 +59,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
                 'некорректная ссылка на телеграм, введите в формате https://t.me/username'
             )
         return telegramm_link
-
 
     def validate(self, attrs):
         password = attrs.get('password')
@@ -163,12 +177,19 @@ class ForgotPasswordCompleteSerializer(serializers.Serializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    date_joined = serializers.SerializerMethodField()
+    is_fireman = serializers.BooleanField(read_only=True)
+
+    def get_date_joined(self, obj):
+        return obj.date_joined.strftime('%d %B %Y').replace(obj.date_joined.strftime('%B'), MONTHS[obj.date_joined.strftime('%B')])
+    
     class Meta:
         model = User
         fields = [
             'email',
             'username',
             'name',
+            'id',
             'last_name',
             'user_photo',
             'github_account',
@@ -176,14 +197,17 @@ class ProfileSerializer(serializers.ModelSerializer):
             'web_site',
             'id',
             'date_joined',
+            'is_mentor',
+            'is_fireman',
+            'about_me',
         ]
   
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         answers = models.Answer.objects.filter(author=instance.id)
         comments = models.Comment.objects.filter(author=instance.id)
-        total_likes = 10
-        total_dislikes = 10
+        total_likes = 0
+        total_dislikes = 0
         for answer in answers:
             total_likes += answer.answer_reviews.filter(is_liked=True).count()*10
             total_dislikes += answer.answer_reviews.filter(is_liked=False).count()
@@ -191,8 +215,13 @@ class ProfileSerializer(serializers.ModelSerializer):
             total_likes += comment.comment_reviews.filter(is_liked=True).count()*10
             total_dislikes += comment.comment_reviews.filter(is_liked=False).count()   
         total_rating = total_likes - total_dislikes
+        if total_rating > 3000:
+            instance.is_fireman = True
+            instance.save()
+            representation['is_fireman'] = True
+        else:
+            instance.is_fireman = False
+            instance.save()
+            representation['is_fireman'] = False
         representation['average_rating'] = total_rating
         return representation
-
-
-    
