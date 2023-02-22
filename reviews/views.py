@@ -23,10 +23,10 @@ def answer_like(request, pk=None):
         try:
             answer_review = AnswerReview.objects.get(
                 answer=answer, author=author)
-            answer_review.delete()
+            answer_review.is_liked = False
             message = 'disliked'
         except AnswerReview.DoesNotExist:
-            AnswerReview.objects.create(answer=answer, author=author)
+            answer_review = AnswerReview.objects.create(answer=answer, author=author, is_liked=True)
             message = 'liked'
         return Response(message, status=200)
 
@@ -45,10 +45,10 @@ def question_like(request, slug=None):
         try:
             question_review = QuestionReview.objects.get(
                 question=question, author=author)
-            question_review.delete()
+            question_review.is_liked = False
             message = 'disliked'
         except QuestionReview.DoesNotExist:
-            QuestionReview.objects.create(question=question, author=author)
+            QuestionReview.objects.create(question=question, author=author, is_liked=True)
             message = 'liked'
         return Response(message, status=200)
 
@@ -67,9 +67,9 @@ def comment_like(request, pk=None):
         try:
             comment_review = CommentReview.objects.get(
                 comment=comment, author=author)
-            comment_review.delete()
+            comment_review.is_liked = False
             message = 'disliked'
         except CommentReview.DoesNotExist:
-            CommentReview.objects.create(comment=comment, author=author)
+            CommentReview.objects.create(comment=comment, author=author, is_liked=True)
             message = 'liked'
         return Response(message, status=200)
