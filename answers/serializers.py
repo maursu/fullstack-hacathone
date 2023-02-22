@@ -39,6 +39,13 @@ class AnswerSerializer(serializers.ModelSerializer):
                     answer=instance.pk,
                     is_liked=False),
                 many=True).data)
+        request = self.context.get('request')
+        user = request.user
+        review = AnswerReview.objects.filter(answer=instance, author=user).first()
+        if review:
+            representation['isLiked'] = True if review.is_liked else False
+        else:
+            representation['isLiked'] = None
         return representation
 
 
