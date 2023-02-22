@@ -17,10 +17,25 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CommentReview',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_liked', models.BooleanField(default=False)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_reviews', to=settings.AUTH_USER_MODEL)),
-                ('comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_reviews', to='answers.comment')),
+                ('id',
+                 models.BigAutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('is_liked',
+                 models.BooleanField(
+                     default=False)),
+                ('author',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='comment_reviews',
+                     to=settings.AUTH_USER_MODEL)),
+                ('comment',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='comment_reviews',
+                     to='answers.comment')),
             ],
         ),
     ]

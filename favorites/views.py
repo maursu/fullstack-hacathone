@@ -7,10 +7,10 @@ from questions.models import Question
 
 
 class FavoritesView(APIView):
-    def get(self,request):
+    def get(self, request):
         queryset = Favorites.objects.filter(user=request.user)
         serializer = FavoritesSerializer(queryset, many=True)
-        return Response(serializer.data,status=200)
+        return Response(serializer.data, status=200)
 
     def delete(self, request, pk):
         try:

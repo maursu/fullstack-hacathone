@@ -13,6 +13,7 @@ class AnswerReviewListView(generics.ListAPIView):
     queryset = AnswerReview.objects.all()
     serializer_class = AnswerReviewSerializer
 
+
 @api_view(['POST'])
 def answer_like(request, pk=None):
     answer = Answer.objects.get(pk=pk)
@@ -20,7 +21,8 @@ def answer_like(request, pk=None):
     serializer = AnswerReviewSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         try:
-            answer_review = AnswerReview.objects.get(answer=answer, author=author)
+            answer_review = AnswerReview.objects.get(
+                answer=answer, author=author)
             answer_review.delete()
             message = 'disliked'
         except AnswerReview.DoesNotExist:
@@ -28,9 +30,11 @@ def answer_like(request, pk=None):
             message = 'liked'
         return Response(message, status=200)
 
+
 class QuestionReviewListView(generics.ListAPIView):
     queryset = QuestionReview.objects.all()
     serializer_class = QuestionReviewSerializer
+
 
 @api_view(['POST'])
 def question_like(request, slug=None):
@@ -39,7 +43,8 @@ def question_like(request, slug=None):
     serializer = QuestionReviewSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         try:
-            question_review = QuestionReview.objects.get(question=question, author=author)
+            question_review = QuestionReview.objects.get(
+                question=question, author=author)
             question_review.delete()
             message = 'disliked'
         except QuestionReview.DoesNotExist:
@@ -52,6 +57,7 @@ class CommentReviewListView(generics.ListAPIView):
     queryset = CommentReview.objects.all()
     serializer_class = CommentReviewSerializer
 
+
 @api_view(['POST'])
 def comment_like(request, pk=None):
     comment = Comment.objects.get(pk=pk)
@@ -59,7 +65,8 @@ def comment_like(request, pk=None):
     serializer = CommentReviewSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         try:
-            comment_review = CommentReview.objects.get(comment=comment, author=author)
+            comment_review = CommentReview.objects.get(
+                comment=comment, author=author)
             comment_review.delete()
             message = 'disliked'
         except CommentReview.DoesNotExist:

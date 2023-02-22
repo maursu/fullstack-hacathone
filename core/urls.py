@@ -10,7 +10,7 @@ schema_view = get_schema_view(
         title='MakersOverflow',
         description='StackOverflow for makers',
         default_version='v1'
-    ), public= True
+    ), public=True
 )
 
 
@@ -26,4 +26,3 @@ urlpatterns = [
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

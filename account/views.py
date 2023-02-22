@@ -17,6 +17,7 @@ from .permissions import IsOwnerOrReadOnly
 
 User = get_user_model()
 
+
 class RegistrationView(generics.CreateAPIView):
     serializer_class = s.RegistrationSerializer
 
@@ -27,7 +28,9 @@ class RegistrationView(generics.CreateAPIView):
 
 class ActivationView(APIView):
     def get(self, request, email, activation_code):
-        user = User.objects.filter(email=email, activation_code=activation_code).first() #берем первого юзера
+        user = User.objects.filter(
+            email=email,
+            activation_code=activation_code).first()  # берем первого юзера
         if not user:
             return Response('Пользователь не найден', status=400)
         user.activation_code = ''
@@ -38,6 +41,7 @@ class ActivationView(APIView):
 
 class LogoutView(APIView):
     permission_classes = [p.IsActivePermission]
+
     def post(self, request):
         return Response(
             'вы вышли со своего аккаунта'
@@ -51,7 +55,7 @@ class ChangePasswordView(APIView):
     def post(self, request):
         serializer = s.ChangePasswordSerializer(
             data=request.data,
-            context={'request':request}
+            context={'request': request}
         )
         if serializer.is_valid(raise_exception=True):
             serializer.set_new_password()
@@ -62,24 +66,25 @@ class ForgotPasswordView(APIView):
     @swagger_auto_schema(request_body=s.ForgotPasswordSerializer)
     def post(self, request):
         serializer = s.ForgotPasswordSerializer(
-            data = request.data
+            data=request.data
         )
         if serializer.is_valid(raise_exception=True):
             serializer.send_verification_email()
             return Response(
-                    'Вам выслали сообщение для восстановления пароля'
-                
-                )
+                'Вам выслали сообщение для восстановления пароля'
+
+            )
+
 
 class ForgotPasswordCompleteView(APIView):
     @swagger_auto_schema(request_body=s.ForgotPasswordCompleteSerializer)
-    def post(self,request):
+    def post(self, request):
         serializer = s.ForgotPasswordCompleteSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.set_new_password()
             return Response(
                 'Ваш пароль успешно восстановлен'
-                )
+            )
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
@@ -89,7 +94,8 @@ class ProfileView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         if not request.user.is_staff:
             serializer.validated_data.pop('is_mentor', None)
@@ -125,14 +131,14 @@ class LoginView(TokenObtainPairView):
         serializer = self.get_serializer(data=request.data)
         username = request.data.get('username')
         user = User.objects.get(username=username)
-        user_data={'id':user.id,
-                'name':user.name,
-                'last_name':user.last_name,
-                'github_account':user.github_account,
-                'telegram_account':user.telegram_account,
-                'web_site':user.web_site,
-                'email':user.email,
-                'date_joined': user.date_joined}
+        user_data = {'id': user.id,
+                     'name': user.name,
+                     'last_name': user.last_name,
+                     'github_account': user.github_account,
+                     'telegram_account': user.telegram_account,
+                     'web_site': user.web_site,
+                     'email': user.email,
+                     'date_joined': user.date_joined}
         new_data = list(user_data.items())
         try:
             serializer.is_valid(raise_exception=True)

@@ -22,8 +22,8 @@ class PermissionsMixin():
             permissions = [AllowAny]
         elif self.action == 'create':
             permissions = [IsAdminAuthPermission]
-        elif self.action in ['update','partial_update', 'destroy']:
-            permissions = [IsAdminUser, IsOwnerOrReadOnly] 
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permissions = [IsAdminUser, IsOwnerOrReadOnly]
         else:
             permissions = [AllowAny]
         return [permission() for permission in permissions]
@@ -38,7 +38,7 @@ class TagPermissionsMixin():
         return [permission() for permission in permissions]
 
 
-class TagViewSet(TagPermissionsMixin,ModelViewSet):
+class TagViewSet(TagPermissionsMixin, ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
 
@@ -46,7 +46,10 @@ class TagViewSet(TagPermissionsMixin,ModelViewSet):
 class QuestionViewSet(PermissionsMixin, ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = serializers.QuestionSerializer
-    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        django_filters.rest_framework.DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter]
     filterset_fields = ['tag']
     search_fields = ['tag__title', 'title']
     ordering_fields = ['title', 'views_count', 'updated_at', 'created_at']
@@ -55,7 +58,7 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             tag_slugs = [i.strip() for i in request.data.get('tag').split(',')]
-        except:
+        except BaseException:
             return Response('Tag requires')
         tags = list(Tag.objects.filter(slug__in=tag_slugs))
         if len(tags) != len(tag_slugs):
@@ -70,16 +73,16 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
     def list(self, request, *args, **kwargs):
         self.serializer_class = serializers.QuestionListSerializer
         return super().list(request, *args, **kwargs)
-    
+
     def retrieve(self, request, *args, **kwargs):
         question = self.get_object()
         question.views_count += 1
         question.save()
         serializer = self.get_serializer(question)
         return Response(serializer.data)
-    
+
     @action(['POST'], detail=True)
-    def favorite(self,request,pk):
+    def favorite(self, request, pk):
         question = self.get_object()
         user = request.user
         try:
@@ -90,7 +93,8 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
             if not favorite.is_favorite:
                 favorite.delete()
         except Favorites.DoesNotExist:
-            Favorites.objects.create(question=question, user=user, is_favorite=True)
+            Favorites.objects.create(
+                question=question, user=user, is_favorite=True)
             message = 'Added to favorite'
         return Response(message, status=200)
 
@@ -102,14 +106,14 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
         matches = []
         for i in queryset:
             result = SequenceMatcher(None, body, i.body).ratio()
-            if result > 0.5 and i.slug!=question.slug:
+            if result > 0.5 and i.slug != question.slug:
                 matches.append(i)
         if matches != []:
             serializer = serializers.QuestionSerializer(matches, many=True)
             return Response(serializer.data, status=200)
         else:
             return Response("Sorry. Matches didn't find")
-    
+
     @action(['POST'], detail=True)
     def find_on_stackoverflow(self, request, pk):
         question = self.get_object()
@@ -120,9 +124,10 @@ class QuestionViewSet(PermissionsMixin, ModelViewSet):
         for i in parsed_list:
             result = fuzz.WRatio(title.lower(), i[0].lower())
             if result > 90:
-                matches.append({'title':i[0], 'link':[i[1]]})
+                matches.append({'title': i[0], 'link': [i[1]]})
         if matches != []:
             serializer = StackOverflowSerialiser(matches, many=True)
             return Response(serializer.data, status=200)
         else:
-            return Response("Sorry. We didn't find similar questions on Stackoverflow.")
+            return Response(
+                "Sorry. We didn't find similar questions on Stackoverflow.")

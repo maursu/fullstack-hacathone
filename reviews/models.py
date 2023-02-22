@@ -5,6 +5,7 @@ from answers.models import Answer, Question, Comment
 
 User = get_user_model()
 
+
 class AnswerReview(models.Model):
     answer = models.ForeignKey(
         Answer,
@@ -19,6 +20,7 @@ class AnswerReview(models.Model):
 
     def __str__(self):
         return f'Answer id: {self.answer.pk}'
+
 
 class QuestionReview(models.Model):
     question = models.ForeignKey(

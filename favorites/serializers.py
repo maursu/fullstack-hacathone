@@ -5,9 +5,9 @@ from questions.models import Question
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = Question
-            fields = '__all__'
+    class Meta:
+        model = Question
+        fields = '__all__'
 
 
 class FavoritesSerializer(serializers.ModelSerializer):
@@ -17,4 +17,3 @@ class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Favorites
         fields = '__all__'
-

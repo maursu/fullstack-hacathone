@@ -44,7 +44,7 @@ class User(AbstractUser):
     slug = models.SlugField(blank=True)
     is_mentor = models.BooleanField(default=False)
     is_fireman = models.BooleanField(default=False)
-    about_me = models.TextField(default= 'shy user')
+    about_me = models.TextField(default='shy user')
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

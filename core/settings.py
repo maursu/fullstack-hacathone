@@ -5,11 +5,10 @@ import os
 from decouple import config
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#User model registration
+# User model registration
 AUTH_USER_MODEL = 'account.User'
 
 
@@ -34,14 +33,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #modules
+    # modules
     'django_filters',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
     'corsheaders',
 
-    #apps
+    # apps
     'account',
     'questions',
     'reviews',
@@ -122,26 +121,28 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8000','http://localhost:3000', 
+    'http://127.0.0.1:8000', 'http://localhost:3000',
 ]
 CORS_ALLOWED_METHODS = [
     'GET', 'POST', 'PATCH', 'PUT', 'OPTIONS'
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 
-#Media settings
+# Media settings
 
 #MEDIA_URL = 'media/'
 #MEDIA_ROOT = BASE_DIR / 'media'
 
-#rest_framework settings
+# rest_framework settings
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'], 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10, 'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )}
 
-#email.backend settings
+# email.backend settings
 EMAIL_BACKEND = config('EMAIL_BACKEND')
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT')
@@ -149,22 +150,22 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-#JWTtoken settings
+# JWTtoken settings
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=100000),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),}
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30), }
 
-#celery settings
+# celery settings
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
 
-#media 
+# media
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
-#logging
+# logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

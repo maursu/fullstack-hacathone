@@ -4,15 +4,15 @@ from .models import AnswerReview, QuestionReview, CommentReview
 
 
 class AnswerReviewSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source = 'author.username')
-    
+    author = serializers.ReadOnlyField(source='author.username')
+
     class Meta:
         model = AnswerReview
         fields = '__all__'
 
 
 class QuestionReviewSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source = 'author.username')
+    author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = QuestionReview
@@ -20,7 +20,7 @@ class QuestionReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentReviewSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source = 'author.username')
+    author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = CommentReview

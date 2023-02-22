@@ -19,19 +19,49 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='QuestionReview',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_liked', models.BooleanField(default=False)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='question_reviews', to=settings.AUTH_USER_MODEL)),
-                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='question_reviews', to='questions.question')),
+                ('id',
+                 models.BigAutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('is_liked',
+                 models.BooleanField(
+                     default=False)),
+                ('author',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='question_reviews',
+                     to=settings.AUTH_USER_MODEL)),
+                ('question',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='question_reviews',
+                     to='questions.question')),
             ],
         ),
         migrations.CreateModel(
             name='AnswerReview',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_liked', models.BooleanField(default=False)),
-                ('answer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answer_reviews', to='answers.answer')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answer_reviews', to=settings.AUTH_USER_MODEL)),
+                ('id',
+                 models.BigAutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('is_liked',
+                 models.BooleanField(
+                     default=False)),
+                ('answer',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='answer_reviews',
+                     to='answers.answer')),
+                ('author',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='answer_reviews',
+                     to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

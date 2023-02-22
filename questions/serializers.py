@@ -8,6 +8,7 @@ from favorites.serializers import FavoritesSerializer
 
 from .utils import filter_text
 
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -18,7 +19,7 @@ class QuestionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = '__all__'
-    
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['answers_count'] = instance.answers.count()
@@ -27,7 +28,7 @@ class QuestionListSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.id')
-    
+
     class Meta:
         model = Question
         fields = '__all__'
@@ -44,11 +45,17 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['favorite'] = (i['is_favorite'] for i in FavoritesSerializer(Favorites.objects.filter(is_favorite=True, question=instance.pk), many = True).data)
-        representation['answers'] = AnswerSerializer(Answer.objects.filter(question=instance.pk), many=True, context=self.context).data
+        representation['favorite'] = (
+            i['is_favorite'] for i in FavoritesSerializer(
+                Favorites.objects.filter(
+                    is_favorite=True,
+                    question=instance.pk),
+                many=True).data)
+        representation['answers'] = AnswerSerializer(Answer.objects.filter(
+            question=instance.pk), many=True, context=self.context).data
         return representation
-    
-    def create(self,validated_data):
+
+    def create(self, validated_data):
         request = self.context.get('request')
         user = request.user
         tag = validated_data.pop('tag', [])
