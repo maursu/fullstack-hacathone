@@ -23,9 +23,12 @@ def answer_like(request, pk=None):
         try:
             answer_review = AnswerReview.objects.get(
                 answer=answer, author=author)
-            answer_review.is_liked = False
+            answer_review.is_liked = not answer_review.is_liked
             answer_review.save()
-            message = 'disliked'
+            if answer_review.is_liked:
+                message = 'liked'
+            else:
+                message = 'disliked'
         except AnswerReview.DoesNotExist:
             answer_review = AnswerReview.objects.create(answer=answer, author=author, is_liked=True)
             message = 'liked'
@@ -46,9 +49,12 @@ def question_like(request, slug=None):
         try:
             question_review = QuestionReview.objects.get(
                 question=question, author=author)
-            question_review.is_liked = False
+            question_review.is_liked = not question_review.is_liked
             question_review.save()
-            message = 'disliked'
+            if question_review.is_liked:
+                message = 'liked'
+            else:
+                message = 'disliked'
         except QuestionReview.DoesNotExist:
             QuestionReview.objects.create(question=question, author=author, is_liked=True)
             message = 'liked'
@@ -69,9 +75,12 @@ def comment_like(request, pk=None):
         try:
             comment_review = CommentReview.objects.get(
                 comment=comment, author=author)
-            comment_review.is_liked = False
+            comment_review.is_liked = not comment_review.is_liked
             comment_review.save()
-            message = 'disliked'
+            if comment_review.is_liked:
+                message = 'liked'
+            else:
+                message = 'disliked'
         except CommentReview.DoesNotExist:
             CommentReview.objects.create(comment=comment, author=author, is_liked=True)
             message = 'liked'
